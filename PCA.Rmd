@@ -1,0 +1,166 @@
+---
+title: "PCA"
+author: "Isabella Chittumuri"
+date: "10/20/2020"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 12.8 Carry out a principal component analysis on all six variables of the glucose data of Table 3.9. Use both S and R. Which do you think is more appropriate here? Show the percent of variance explained. Based on the average eigenvalue or a scree plot, decide how many components to retain. Can you interpret the components of either S or R?
+
+```{r}
+getwd()
+glucose <- read.table("T3_9_GLUCOSE.dat")
+```
+ 
+```{r}
+# Covariance of glucose
+glucose_S <- var(glucose)
+
+# PCA - covariance, glucose
+glucose_pca_S <- princomp(covmat = glucose_S)
+summary(glucose_pca_S, loadings = TRUE)
+```
+
+We use S, the covariance matrix, to understand how the variables of the data set are varying from the mean with respect to each other, and to see if there is any relationship between them.
+
+The Principal Component Analysis (PCA) is a method used to reduce the dimensionality of large data sets, by transforming a large set of variables into a smaller one that still contains most of the information in the large set.
+
+After computing the PCA of the covariance matrix, we get six principal components. Principal components (PC) are new variables that are constructed as linear combinations of the initial variable. 
+
+We want to retain just enough components to explain a large percentage of the total variation of the original variables. The values between 70% and 90% are sufficient enough. In this case, the first and second PC account for 75% of the total variance of the observed variables. If we add the third PC, this percentage up will increase to 90%. This is understandable since the first three PCs encompass most of  proportion of variance of the data.
+
+```{r}
+# Eigen values for covariance 
+glucose_S_evals <- eigen(glucose_S)$values; glucose_S_evals
+
+# Mean of eigen values
+mean(glucose_S_evals)
+```
+
+We can excluded the PCs whose eigenvalues are less than the average eigenvalue. In this case, we can exclude the third, fourth. , fifth and sixth PCs. This also means that only the first and second PCs are greater than the average eigenvalue.
+
+```{r}
+# Scree diagram, covariance
+plot(glucose_pca_S)
+
+# Scree plot, covariance
+plot(glucose_pca_S$sdev^2, xlab = "Component number",
+     ylab = "Component variance", type = "l", main = "Scree plot S (cov)")
+```
+
+A scree plot shows how much variation each PC captures from the data. This scree plot is has a steep curve that bends quickly and flattens out. This suggests that the first two or three PCs are sufficient to describe the essence of the data, Based on our entire analysis, we should retain the first two PCs.
+
+```{r}
+# Correlation of glucose
+glucose_R <- cor(glucose)
+
+# PCA - correlation, glucose
+glucose_pca_R <- princomp(covmat = glucose_R)
+summary(glucose_pca_R, loadings = TRUE)
+```
+
+We use R, the correlation matrix, to understand is a method of the strength and direction of the relationships between the variables. A correlation is a function of the covariance, but a correlation matrix standardizes each of the variables, with a mean of 0 and a standard deviation of 1.
+
+After computing the PCA of the correlation matrix, we get six principal components. In this case, the first three PCs account for 70% of the total variance of the observed variables. If we add the fourth PC, this percentage up will increase to 85%.
+
+```{r}
+# Eigen values
+glucose_R_evals <- eigen(glucose_R)$values; glucose_R_evals
+
+# Mean of eigen values
+mean(glucose_R_evals)
+```
+
+Only the first three PCs are greater than the average eigenvalue, meaning that these are the PCs to include.
+
+```{r}
+# Scree diagram, correlation
+plot(glucose_pca_R)
+
+# Scree plot, correlation
+plot(glucose_pca_R$sdev^2, xlab = "Component number",
+     ylab = "Component variance", type = "l", main = "Scree plot R (cor)")
+```
+
+This scree plot is doesn't have really steep curve. The line actually bends and flattens out slowly, suggesting that we would need more PCs than normal. Based on our entire analysis, we should retain the first three PCs. 
+
+In comparison, the first three components of the covariance matrix account for 90% of the variance, which that of the correlation matrix only accounts for 70% of the variance. Because a larger precent of variance is explained, it is more appropriate to use the covariance matrix S.
+
+## 12.15 Carry out a principal component analysis on the temperature data of Table 7.2. Use both S and R. Which do you think is more appropriate here? Show the percent of variance explained. Based on the average eigenvalue or a scree plot, decide how many components to retain. Can you interpret the components of either S or R?
+ 
+```{r}
+temp <- read.table("T7_2_TEMPERAT.DAT")
+```
+
+```{r}
+# Covariance of temp
+temp_S <- var(temp)
+
+# PCA - covariance, temp
+temp_pca_S <- princomp(covmat = temp_S)
+summary(temp_pca_S, loadings = TRUE)
+```
+ 
+After computing the PCA of the covariance matrix, we get eleven principal components. The first PC accounts for 92% of the total variance of the observed variables. If we add the second PC, this percentage up will increase to 98%. The rest of the PCs add very little to the cumulative proportion variance.
+
+```{r}
+# Eigen values for covariance 
+temp_S_evals <- eigen(temp_S)$values; temp_S_evals
+
+# Mean of eigen values
+mean(temp_S_evals)
+```
+ 
+Similarly in the previous question, we only include in the PCs whose eigenvalues are greater than the average eigenvalue. In this case, we only include the first PC, and exclude the rest of the PCs.
+
+```{r}
+# Scree diagram, covariance
+plot(temp_pca_S)
+
+# Scree plot, covariance
+plot(temp_pca_S$sdev^2, xlab = "Component number",
+     ylab = "Component variance", type = "l", main = "Scree plot S (cov)")
+```
+
+A scree plot shows how much variation each PC captures from the data. This scree plot is has one elbow at the second PC, with a steep curve that bends quickly and flattens out. This suggests that the only first PC is sufficient enough to describe the essence of the data. Based on our entire analysis, we should retain the first PC.
+
+```{r}
+# Correlation of temp
+temp_R <- cor(temp)
+
+# PCA - correlation, temp
+temp_pca_R <- princomp(covmat = temp_R)
+summary(temp_pca_R, loadings = TRUE)
+```
+
+After computing the PCA of the correlation matrix, we get six principal components. In this case, the first two PCs account for 74% of the total variance of the observed variables. If we add the third PC, this percentage will increase to 84%. If we add the fourth PC, this percentage will increase to 91%.
+
+```{r}
+# Eigen values for correlation 
+temp_R_evals <- eigen(temp_R)$values; temp_R_evals
+
+# Mean of eigen values
+mean(temp_R_evals)
+```
+
+Only the first three PCs are greater than the average eigenvalue, meaning that these are the PCs to include.
+
+```{r}
+# Scree diagram, correlation
+plot(temp_pca_R)
+
+# Scree plot, correlation
+plot(temp_pca_R$sdev^2, xlab = "Component number",
+     ylab = "Component variance", type = "l", main = "Scree plot R (cor)")
+```
+
+This scree plot is doesn't have really steep curve. The line bends and flattens out slowly, suggesting that we would need more PCs than normal. Based on our entire analysis, we should retain the first three PCs. 
+
+The first or second PCs would be enough for the covariance matrix with 92% or 98% of the variance accounted for. In comparison, the correlation matrix requires three PCs to account only 84% of the variance, while needing seven PCs to account for 98% of the variance. Therefore, it is more appropriate to use the covariance matrix S.
+
+
